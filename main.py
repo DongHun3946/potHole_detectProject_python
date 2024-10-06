@@ -71,8 +71,8 @@ while True:
 
             latitude, longitude = gpsModule.printGPS(sr)
 
-            if class_name == "PotHole" and time.time() - last_save_time >= 2:
-                formatted_time = time.strftime("%Y%m%d_%H_%M_%S", time.localtime())  # 현재 시각(20_13_33 형식)
+            if class_name == "PotHole" and time.time() - last_save_time >= 5:
+                formatted_time = time.strftime("%Y%m%d_%H%M%S", time.localtime())  # 현재 시각(20_13_33 형식)
                 photo_name = f"pothole_{photo_count}_{formatted_time}.jpg"                  # 이미지 이름 설정
                 cv2.imwrite(photo_name, img)                                                # 이미지 저장
                 photo_count += 1

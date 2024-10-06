@@ -22,3 +22,4 @@ def create_potImage(latitude, longitude, state, detectDate, imagePath, user):
         cur.close()       # 커서를 닫음
         conn.close()      # 연결을 닫음
         print("GPS 인식이 원활치않아 DB에 전송하지 못했습니다.")
+
