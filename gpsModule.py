@@ -13,15 +13,17 @@ def printGPS(sr):
     def work(): #시리얼 포트에서 데이터를 읽고 NMEA 프로토콜의 $GPRMC 메시지를 처리하여 GPS 좌표를 변환
         global uart
         global uart_split
-
-        recvpacket = sr.readline().decode()
-        uart_split = recvpacket.split(",")
-        if uart_split[0] == '$GPRMC':
-            lat_dmm = uart_split[3]
-            lon_dmm = uart_split[5]
-            lat_dd, lon_dd = convert_coordinates(lat_dmm, lon_dmm)
-            return lat_dd, lon_dd
-        else:
+        try:
+            recvpacket = sr.readline().decode()
+            uart_split = recvpacket.split(",")
+            if uart_split[0] == '$GPRMC':
+                lat_dmm = uart_split[3]
+                lon_dmm = uart_split[5]
+                lat_dd, lon_dd = convert_coordinates(lat_dmm, lon_dmm)
+                return lat_dd, lon_dd
+            else:
+                return 0.0, 0.0
+        except Exception as e:
             return 0.0, 0.0
 
     uart = []

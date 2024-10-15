@@ -22,7 +22,7 @@ except Exception as e:                              # 예외 발생 시 종료
 
 #-------------- 사용자 ID 입력 후 시작 ---------------#
 userId = input("ID를 입력하세요 : ")
-if findUser.validUser(f'{userId}'):
+if findUser.validUser(f'{userId}') is not None:
     print("인증되었습니다.")
     user = findUser.validUser(f'{userId}')          # user = 사용자 id(일련번호)
 else:
