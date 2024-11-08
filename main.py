@@ -9,7 +9,6 @@ import findUser
 import sendToDB
 import threading
 
-
 try:                                                # COM3에서 115200의 보드레이트로 시리얼 통신을 설정
     sr = serial.Serial("COM3", 115200)
     print("GPS 모듈이 연결되었습니다.")
@@ -18,11 +17,9 @@ except Exception as e:                              # 예외 발생 시 종료
     exit()
 
 
-
-
 #-------------- 사용자 ID 입력 후 시작 ---------------#
 userId = input("ID를 입력하세요 : ")
-if findUser.validUser(f'{userId}'):
+if findUser.validUser(f'{userId}') is not None:
     print("인증되었습니다.")
     user = findUser.validUser(f'{userId}')          # user = 사용자 id(일련번호)
 else:
@@ -40,7 +37,7 @@ frame_height = int(cap.get(4))      # 비디오 프레임의 높이
 
 out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 10, (frame_width, frame_height))  # 비디오 출력파일 생성, MJPG 코덱 사용, 초당 10프레임
 
-model = YOLO("./YOLO-Weights/best_pothole_v3.pt")  # YOLO 모델 로드
+model = YOLO("./YOLO-Weights/best_pothole_v4.pt")  # YOLO 모델 로드
 classNames = ["PotHole"]                           # 탐지할 클래스 이름 정의
 
 last_save_time = time.time()                       # 초 단위로 현재 시간을 저장
@@ -77,6 +74,7 @@ while True:
                 photo_name = f"pothole_{formatted_time}.jpg"                  # 이미지 이름 설정
                 cv2.imwrite(f"C:/Users/cdh39/PycharmProjects/4th_capstone/images/{photo_name}", img)                # 이미지 저장
                 threading.Thread(target=sendImage.send, args=(photo_name,)).start()    # 서버에 이미지 전송
+
                 sendToDB.create_potImage(latitude, longitude,
                                          "접수 중",
                                          formatted_time,

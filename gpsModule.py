@@ -26,4 +26,3 @@ def printGPS(sr):
                     lat_dd, lon_dd = convert_coordinates(lat_dmm, lon_dmm)
                     return lat_dd, lon_dd
         # 유효하지 않은 데이터를 받은 경우 다시 읽기
-
