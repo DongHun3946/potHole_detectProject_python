@@ -3,21 +3,18 @@ import cv2
 import math
 import time                     # 시간 정보 및 딜레이를 주기 위해 사용
 import serial                   #시리얼 통신을 처리하는 모듈
+import gpsModule
 import sendImage
 import findUser
 import sendToDB
-import gpsModule
+import threading
 
-#----------------- GPS 모듈 연결 --------------------#
 try:                                                # COM3에서 115200의 보드레이트로 시리얼 통신을 설정
     sr = serial.Serial("COM3", 115200)
     print("GPS 모듈이 연결되었습니다.")
 except Exception as e:                              # 예외 발생 시 종료
     print(f"포트 인식 안 됨: {e}")
     exit()
-#---------------------------------------------------#
-
-
 
 
 #-------------- 사용자 ID 입력 후 시작 ---------------#
@@ -40,14 +37,15 @@ frame_height = int(cap.get(4))      # 비디오 프레임의 높이
 
 out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 10, (frame_width, frame_height))  # 비디오 출력파일 생성, MJPG 코덱 사용, 초당 10프레임
 
-model = YOLO("./YOLO-Weights/best_pothole_v2.pt")  # YOLO 모델 로드
+model = YOLO("./YOLO-Weights/best_pothole_v4.pt")  # YOLO 모델 로드
 classNames = ["PotHole"]                           # 탐지할 클래스 이름 정의
 
 last_save_time = time.time()                       # 초 단위로 현재 시간을 저장
-photo_count = 0                                    # 사진 카운터 초기화
+
 
 while True:
     success, img = cap.read()             #카메라에서 현재 프레임을 읽고 성공여부 : success, 프레임 이미지 : img 에 반환
+    img = cv2.resize(img, (640, 480))
     results = model(img, stream=True)     #프레임 이미지를 model에 입력 후 처리결과를 results 에 저장(stream = true 는 스트리밍 모드에서 작동하도록 함)
 
     for r in results:
@@ -73,14 +71,14 @@ while True:
 
             if class_name == "PotHole" and time.time() - last_save_time >= 5:
                 formatted_time = time.strftime("%Y%m%d_%H%M%S", time.localtime())  # 현재 시각(20_13_33 형식)
-                photo_name = f"pothole_{photo_count}_{formatted_time}.jpg"                  # 이미지 이름 설정
-                cv2.imwrite(photo_name, img)                                                # 이미지 저장
-                photo_count += 1
-                sendImage.send(photo_name)                                                  # 서버에 이미지 전송
+                photo_name = f"pothole_{formatted_time}.jpg"                  # 이미지 이름 설정
+                cv2.imwrite(f"C:/Users/cdh39/PycharmProjects/4th_capstone/images/{photo_name}", img)                # 이미지 저장
+                threading.Thread(target=sendImage.send, args=(photo_name,)).start()    # 서버에 이미지 전송
+
                 sendToDB.create_potImage(latitude, longitude,
                                          "접수 중",
                                          formatted_time,
-                                         f"/static/pothole_images/{photo_name}",
+                                         f"{photo_name}",
                                          user)                                              # DB에 정보 전송
 
                 last_save_time = time.time()                                                # 마지막 저장 시간 갱신

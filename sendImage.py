@@ -2,7 +2,7 @@ import requests
 
 def send(imageName):
     try:
-        file_path = f'C:/Users/cdh39/PycharmProjects/ayu_capstone/venv/images/{imageName}'
+        file_path = f'C:/Users/cdh39/PycharmProjects/4th_capstone/images/{imageName}'
         files = {'file': open(file_path, 'rb')}  # file_path에 해당하는 이미지 파일을 바이너리 모드로 열어서 file에 저장
 
         url = 'http://localhost:8080/api/upload'
