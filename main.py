@@ -37,7 +37,7 @@ frame_height = int(cap.get(4))      # 비디오 프레임의 높이
 
 out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 10, (frame_width, frame_height))  # 비디오 출력파일 생성, MJPG 코덱 사용, 초당 10프레임
 
-model = YOLO("./YOLO-Weights/best_pothole_v4.pt")  # YOLO 모델 로드
+model = YOLO("./YOLO-Weights/best_pothole_v3.pt")  # YOLO 모델 로드
 classNames = ["PotHole"]                           # 탐지할 클래스 이름 정의
 
 last_save_time = time.time()                       # 초 단위로 현재 시간을 저장
